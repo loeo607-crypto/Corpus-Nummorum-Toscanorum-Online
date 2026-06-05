@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNT - Zecca di Firenze</title>
+    <style>
+        /* --- STILE GENERALE ED EDITORIALE --- */
+        body {
+            font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+            background-color: #fbf9f4;
+            color: #332c26;
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header-zecca {
+            text-align: center;
+            padding: 70px 20px;
+            background-color: #f5f0e4;
+            border-bottom: 1px solid #e3dac9;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.01);
+        }
+
+        .header-zecca h1 {
+            font-size: 2.8em;
+            color: #2b241f;
+            margin: 0;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .header-zecca .subtitle {
+            font-family: 'Lora', 'Georgia', serif;
+            font-style: italic;
+            color: #a38038;
+            margin: 10px 0 0 0;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 50px auto;
+            padding: 0 25px;
+        }
+
+        .back-link {
+            font-family: 'Lora', 'Georgia', serif;
+            display: inline-block;
+            color: #a38038;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 35px;
+            font-size: 0.95em;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #2b241f;
+        }
+
+        /* --- CONTENITORI SEZIONI STORICHE --- */
+        .epoca-sezione {
+            background-color: #ffffff;
+            border: 1px solid #ebdcb9;
+            border-radius: 8px;
+            padding: 40px;
+            margin-bottom: 45px;
+            box-shadow: 0 4px 20px rgba(43, 36, 31, 0.02);
+        }
+
+        .epoca-sezione h2 {
+            font-size: 1.8em;
+            color: #2b241f;
+            border-bottom: 1px solid #ebdcb9;
+            padding-bottom: 15px;
+            margin-top: 0;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- SEZIONE REPUBBLICA --- */
+        .repubblica-display {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 45px;
+            margin-top: 25px;
+        }
+
+        .repubblica-testi {
+            flex: 1;
+        }
+
+        .repubblica-testi p {
+            font-family: 'Lora', 'Georgia', serif;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #52463e;
+            font-size: 1.05em;
+            text-align: justify;
+        }
+
+        /* Citazione d'Archivio */
+        .citazione-testo {
+            font-family: 'Lora', 'Georgia', serif;
+            font-style: italic;
+            border-left: 2px solid #a38038;
+            padding-left: 20px;
+            margin: 25px 0;
+            color: #615349;
+            font-size: 1em;
+            line-height: 1.7;
+        }
+
+        .citazione-fonte {
+            display: block;
+            font-size: 0.85em;
+            color: #a38038;
+            margin-top: 8px;
+            font-weight: 600;
+            font-style: normal;
+            letter-spacing: 0.5px;
+        }
+
+        /* Bottone Tendina Stile Minimal */
+        .btn-tendina {
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 280px;
+            background-color: #ffffff;
+            color: #a38038;
+            border: 1px solid #a38038;
+            padding: 12px 20px;
+            font-family: 'Lora', 'Georgia', serif;
+            font-size: 0.95em;
+            font-weight: 600;
+            text-align: left;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            margin-top: 20px;
+        }
+
+        .btn-tendina::after {
+            content: "→";
+            font-size: 1.1em;
+            transition: transform 0.25s ease;
+        }
+
+        .btn-tendina.active {
+            background-color: #a38038;
+            color: #ffffff;
+        }
+
+        .btn-tendina.active::after {
+            transform: rotate(90deg);
+        }
+
+        .btn-tendina:hover {
+            background-color: #a38038;
+            color: #ffffff;
+        }
+
+        /* Tendina Svolgimento */
+        .tendina-contenitore {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+        }
+
+        .tendina-contenitore.show {
+            max-height: 1500px;
+            opacity: 1;
+        }
+
+        .tendina-contenuto {
+            background-color: #faf8f5;
+            border: 1px solid #ebdcb9;
+            border-radius: 4px;
+            padding: 30px;
+            margin-top: 15px;
+        }
+
+        /* Cornice Foto Repubblica */
+        .repubblica-foto-link {
+            display: block;
+            width: 280px;
+            height: 280px;
+            flex-shrink: 0;
+            border: 1px solid #ebdcb9;
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: #faf8f5;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .repubblica-foto-link img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .repubblica-foto-link:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(163, 128, 56, 0.15);
+        }
+
+        /* --- LISTE DEI NOMINALI --- */
+        .metallo-gruppo {
+            margin-bottom: 30px;
+        }
+
+        .metallo-gruppo:last-child {
+            margin-bottom: 0;
+        }
+
+        .metallo-titolo {
+            font-size: 0.95em;
+            font-weight: 700;
+            color: #2b241f;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ebdcb9;
+            padding-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .nominali-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nominali-list li {
+            margin-bottom: 6px;
+        }
+
+        .nominali-list a {
+            font-family: 'Lora', 'Georgia', serif;
+            display: inline-block;
+            color: #52463e;
+            text-decoration: none;
+            font-size: 0.98em;
+            padding: 2px 0;
+            transition: all 0.2s ease;
+        }
+
+        .nominali-list a:hover {
+            color: #a38038;
+            transform: translateX(5px);
+        }
+
+        /* --- GRIGLIA ESPOSITIVA SOVRANI --- */
+        .sovrani-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .sovrano-card {
+            background-color: #ffffff;
+            border: 1px solid #eadecc;
+            border-radius: 6px;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .sovrano-card:hover {
+            border-color: #a38038;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(163, 128, 56, 0.08);
+        }
+
+        .coin-photo-box {
+            width: 110px;
+            height: 110px;
+            background-color: #faf8f5;
+            border: 1px solid #eadecc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            color: #a38038;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+            overflow: hidden;
+            margin-bottom: 15px;
+            transition: border-color 0.25s;
+        }
+
+        .sovrano-card:hover .coin-photo-box {
+            border-color: #a38038;
+        }
+
+        .coin-photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sovrano-nome {
+            font-size: 1.05em;
+            font-weight: 600;
+            color: #2b241f;
+            line-height: 1.4;
+        }
+
+        .sovrano-date {
+            font-family: 'Lora', 'Georgia', serif;
+            font-size: 0.85em;
+            color: #8a7667;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        h3 {
+            font-size: 1.3em;
+            color: #2b241f;
+            margin-top: 45px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Stile specifico per il bottone tendina dentro le card dei sovrani */
+        .sovrano-card .btn-tendina {
+            max-width: 100%;
+            padding: 8px 12px;
+            font-size: 0.85em;
+            margin-top: 15px;
+        }
+
+        .sovrano-card .tendina-contenuto {
+            text-align: left;
+            padding: 15px;
+        }
+
+        /* --- RISPOSTA RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .repubblica-display {
+                flex-direction: column-reverse;
+                align-items: center;
+            }
+            .repubblica-foto-link {
+                width: 240px;
+                height: 240px;
+                margin-bottom: 15px;
+            }
+            .btn-tendina {
+                display: flex;
+                margin: 25px auto 0 auto;
+            }
+            .epoca-sezione {
+                padding: 25px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="header-zecca">
+        <h1>ZECCA DI FIRENZE</h1>
+        <div class="subtitle">Storia monetaria dalle origini comunali alla fine del Granducato</div>
+    </div>
+
+    <div class="container">
+        <a href="index.html" class="back-link">← Torna all'Indice Generale delle Zecche</a>
+
+        <!-- 1. REPUBBLICA -->
+        <div class="epoca-sezione">
+            <h2>1. Repubblica Fiorentina (1181 - 1532)</h2>
+            
+            <div class="repubblica-display">
+                <div class="repubblica-testi">
+                    <p>La monetazione autonoma di Firenze si sviluppò parallelamente all'affermazione della sua indipendenza politica e della sua straordinaria potenza commerciale ed economica nel panorama medievale.</p>
+                    
+                    <div class="citazione-testo">
+                        "La Repubblica Fiorentina, fin dalle sue origini comunali, manifestò la sua sovranità anche attraverso la battitura della moneta. Sebbene le prime emissioni minori rimangano storicamente indeterminate nella datazione precisa, l'apice di questo sistema fu raggiunto nel 1252 con l'introduzione del celeberrimo fiorino d'oro, destinato a dominare i mercati europei."
+                        <span class="citazione-fonte">— Cfr. Corpus Nummorum Italicorum (CNI), Vol. XII (Toscana-Firenze)</span>
+                    </div>
+                    
+                    <button class="btn-tendina" id="toggleTendinaBtn">Mostra i nominali</button>
+                    
+                    <div class="tendina-contenitore" id="tendinaContenitore">
+                        <div class="tendina-contenuto">
+                            
+                            <!-- ORO -->
+                            <div class="metallo-gruppo">
+                                <div class="metallo-titolo">ORO</div>
+                                <ul class="nominali-list">
+                                    <li><a href="#">Fiorino d'oro (e varianti Largo)</a></li>
+                                    <li><a href="#">Scudo d'oro del sole (detto dell'Assedio)</a></li>
+                                </ul>
+                            </div>
+
+                            <!-- ARGENTO -->
+                            <div class="metallo-gruppo">
+                                <div class="metallo-titolo">ARGENTO</div>
+                                <ul class="nominali-list">
+                                    <li><a href="#">Mezzo scudo d'argento "dell'Assedio"</a></li>
+                                    <li><a href="#">Quinto di scudo da 1 lira 8 soldi ("Cotale")</a></li>
+                                    <li><a href="#">Barile da 10 soldi</a></li>
+                                    <li><a href="#">Carlino da 10 soldi</a></li>
+                                    <li><a href="#">Grosso da 7 soldi</a></li>
+                                    <li><a href="#">Grosso da 6 soldi 8 denari</a></li>
+                                    <li><a href="#">Grosso da 5 soldi 6 denari</a></li>
+                                    <li><a href="#">Grosso da 5 soldi 4 denari</a></li>
+                                    <li><a href="#">Guelfo da 5 soldi</a></li>
+                                    <li><a href="#">Guelfo da 4 soldi</a></li>
+                                    <li><a href="#">Grossetto da 4 soldi</a></li>
+                                    <li><a href="#">Mezzo grosso da 3 soldi 4 denari ("grossetto")</a></li>
+                                    <li><a href="#">Fiorino grosso da 2 soldi ("Popolino")</a></li>
+                                    <li><a href="#">Fiorino grosso da 30 denari ("detto Guelfo")</a></li>
+                                    <li><a href="#">Fiorino grosso da 20 denari ("Ghibellino")</a></li>
+                                    <li><a href="#">Fiorino grosso da 20 denari</a></li>
+                                    <li><a href="#">Fiorino grosso da 15 denari</a></li>
+                                    <li><a href="#">Soldino da 12 denari</a></li>
+                                    <li><a href="#">Fiorino grosso da 6 denari ("Bargellino")</a></li>
+                                    <li><a href="#">Fiorino grosso da 6 denari</a></li>
+                                    <li><a href="#">1/2 Fiorino grosso o Grossetto</a></li>
+                                </ul>
+                            </div>
+
+                            <!-- ALTRI METALLI -->
+                            <div class="metallo-gruppo">
+                                <div class="metallo-titolo">MISTURA E RAME</div>
+                                <ul class="nominali-list">
+                                    <li><a href="#">Fiorino vecchio da 12 denari</a></li>
+                                    <li><a href="#">Fiorino di stella da 12 denari</a></li>
+                                    <li><a href="#">Fiorino nuovo da 12 denari</a></li>
+                                    <li><a href="#">Quattrino grosso bianco</a></li>
+                                    <li><a href="#">Quattrino bianco</a></li>
+                                    <li><a href="#">Quattrino da 4 denari (e varianti Quattrino Nero)</a></li>
+                                    <li><a href="#">Mezzo Quattrino da 2 denari</a></li>
+                                    <li><a href="#">Fiorino piccolo / Picciolo da 1 denaro</a></li>
+                                    <li><a href="#">Fiorino piccolo di stella</a></li>
+                                    <li><a href="#">Fiorino piccolo nuovo / vecchio</a></li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <a href="foto-firenze/repubblica.jpg" target="_blank" class="repubblica-foto-link" title="Clicca per ingrandire la moneta">
+                    <img src="foto-firenze/repubblica.jpg" alt="Moneta della Repubblica" onerror="this.style.display='none'; this.parentNode.innerText='IMMAGINE REPERTO';">
+                </a>
+            </div>
+        </div>
+
+        <!-- 2. DUCATO DI FIRENZE -->
+        <div class="epoca-sezione">
+            <h2>2. Ducato di Firenze (1532 - 1555)</h2>
+            <div class="sovrani-grid">
+                
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/alessandro.jpg" alt="Alessandro" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Alessandro de' Medici</div>
+                    <div class="sovrano-date">1532 - 1537</div>
+                </div>
+
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/cosimo1_duca.jpg" alt="Cosimo I" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Cosimo I de' Medici</div>
+                    <div class="sovrano-date">1537 - 1555 (Duca)</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 3. DUCATO DI FIRENZE E SIENA -->
+        <div class="epoca-sezione">
+            <h2>3. Ducato di Firenze e Siena (1555 - 1569)</h2>
+            <div class="sovrani-grid" style="grid-template-columns: repeat(auto-fill, minmax(210px, 260px));">
+                
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/cosimo1_siena.jpg" alt="Cosimo I Siena" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Cosimo I de' Medici</div>
+                    <div class="sovrano-date">1555 - 1569 (Due Ducati)</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 4. GRANDUCATO DI TOSCANA -->
+        <div class="epoca-sezione">
+            <h2>4. Granducato di Toscana (1569 - 1859)</h2>
+            
+            <h3>I Granduchi della dinastia Medici</h3>
+            <div class="sovrani-grid">
+                
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/cosimo1_granduca.jpg" alt="Cosimo I" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Cosimo I</div>
+                    <div class="sovrano-date">1569 - 1574</div>
+                </div>
+
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/francesco1.jpg" alt="Francesco I" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Francesco I</div>
+                    <div class="sovrano-date">1574 - 1587</div>
+                </div>
+
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/ferdinando1.jpg" alt="Ferdinando I" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Ferdinando I</div>
+                    <div class="sovrano-date">1587 - 1609</div>
+                </div>
+
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/cosimo2.jpg" alt="Cosimo II" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Cosimo II</div>
+                    <div class="sovrano-date">1609 - 1621</div>
+                </div>
+
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/ferdinando2.jpg" alt="Ferdinando II" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Ferdinando II</div>
+                    <div class="sovrano-date">1621 - 1670</div>
+                </div>
+
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/cosimo3.jpg" alt="Cosimo III" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Cosimo III</div>
+                    <div class="sovrano-date">1670 - 1723</div>
+                </div>
+
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/giangastone.jpg" alt="Gian Gastone" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Gian Gastone</div>
+                    <div class="sovrano-date">1723 - 1737</div>
+                </div>
+
+            </div>
+
+            <h3>I quattro Granduchi della dinastia Lorena</h3>
+            <div class="sovrani-grid">
+                
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/francescostefano.jpg" alt="Francesco Stefano" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Francesco Stefano</div>
+                    <div class="sovrano-date">1737 - 1765</div>
+                </div>
+
+                <!-- SCHEDA ATTIVA: PIETRO LEOPOLDO -->
+                <div class="sovrano-card" style="border-color: #a38038; background-color: #fffdfa;">
+                    <!-- RITRATTO CLICCABILE -->
+                    <a href="approfondimentipietroleopoldo.html" style="display: block; width: 100%; text-decoration: none;">
+                        <div style="width: 110px; height: 120px; background-color: #faf8f5; border: 1px solid #ebdcb9; border-radius: 4px; overflow: hidden; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.7em; color: #a38038; letter-spacing: 1px;">
+                            <img src="foto-firenze/ritratto-pietroleopoldo.jpg" alt="Ritratto Pietro Leopoldo" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentNode.innerText='RITRATTO MANCANTE';">
+                        </div>
+                    </a>
+                    
+                    <div class="sovrano-nome" style="color: #a38038;">Pietro Leopoldo</div>
+                    <div class="sovrano-date">1765 - 1790</div>
+                    
+                    <button class="btn-tendina" id="toggleLeopoldoBtn">Mostra i nominali</button>
+                    
+                    <div class="tendina-contenitore" id="leopoldoContenitore" style="width: 100%;">
+                        <div class="tendina-contenuto">
+                            <div class="metallo-gruppo">
+                                <div class="metallo-titolo">MONETE DA DEFINIRE</div>
+                                <ul class="nominali-list">
+                                    <li><a href="#">Bozza nominale 1</a></li>
+                                    <li><a href="#">Bozza nominale 2</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/ferdinando3.jpg" alt="Ferdinando III" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Ferdinando III</div>
+                    <div class="sovrano-date">1790 - 1824</div>
+                </div>
+
+                <div class="sovrano-card">
+                    <div class="coin-photo-box">
+                        <img src="foto-firenze/leopoldo2.jpg" alt="Leopoldo II" onerror="this.style.display='none'; this.parentNode.innerText='REPERTO';">
+                    </div>
+                    <div class="sovrano-nome">Leopoldo II</div>
+                    <div class="sovrano-date">1824 - 1859</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT ATTIVAZIONE TENDINE -->
+    <script>
+        // Tendina 1: Repubblica
+        const toggleRepubblicaBtn = document.getElementById('toggleTendinaBtn');
+        const repubblicaContenitore = document.getElementById('tendinaContenitore');
+
+        toggleRepubblicaBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            repubblicaContenitore.classList.toggle('show');
+            toggleRepubblicaBtn.classList.toggle('active');
+            
+            if(repubblicaContenitore.classList.contains('show')) {
+                toggleRepubblicaBtn.innerText = "Nascondi i nominali";
+            } else {
+                toggleRepubblicaBtn.innerText = "Mostra i nominali";
+            }
+        });
+
+        // Tendina 2: Pietro Leopoldo
+        const toggleLeopoldoBtn = document.getElementById('toggleLeopoldoBtn');
+        const leopoldoContenitore = document.getElementById('leopoldoContenitore');
+
+        toggleLeopoldoBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            leopoldoContenitore.classList.toggle('show');
+            toggleLeopoldoBtn.classList.toggle('active');
+            
+            if(leopoldoContenitore.classList.contains('show')) {
+                toggleLeopoldoBtn.innerText = "Nascondi i nominali";
+            } else {
+                toggleLeopoldoBtn.innerText = "Mostra i nominali";
+            }
+        });
+    </script>
+
+</body>
+</html>

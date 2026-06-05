@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pietro Leopoldo - Zecca di Firenze</title>
+    <style>
+        body {
+            font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+            background-color: #fbf9f4;
+            color: #332c26;
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header-zecca {
+            text-align: center;
+            padding: 70px 20px;
+            background-color: #f5f0e4;
+            border-bottom: 1px solid #e3dac9;
+        }
+
+        .header-zecca h1 {
+            font-size: 2.8em;
+            color: #2b241f;
+            margin: 0;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .header-zecca .subtitle {
+            font-family: 'Lora', 'Georgia', serif;
+            font-style: italic;
+            color: #a38038;
+            margin: 10px 0 0 0;
+            font-size: 1.1em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 25px;
+        }
+
+        .back-link {
+            font-family: 'Lora', 'Georgia', serif;
+            display: inline-block;
+            color: #a38038;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 35px;
+            font-size: 0.95em;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #2b241f;
+        }
+
+        .sezione {
+            background-color: #ffffff;
+            border: 1px solid #ebdcb9;
+            border-radius: 8px;
+            padding: 40px;
+            margin-bottom: 45px;
+            box-shadow: 0 4px 20px rgba(43, 36, 31, 0.02);
+        }
+
+        .sezione h2 {
+            font-size: 1.8em;
+            color: #2b241f;
+            border-bottom: 1px solid #ebdcb9;
+            padding-bottom: 15px;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .sezione p {
+            font-family: 'Lora', 'Georgia', serif;
+            color: #52463e;
+            font-size: 1.05em;
+            text-align: justify;
+            margin-bottom: 20px;
+        }
+
+        .citazione-testo {
+            font-family: 'Lora', 'Georgia', serif;
+            font-style: italic;
+            border-left: 2px solid #a38038;
+            padding-left: 20px;
+            margin: 25px 0;
+            color: #615349;
+        }
+
+        .citazione-fonte {
+            display: block;
+            font-size: 0.85em;
+            color: #a38038;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .media-player {
+            background: #f5f0e4;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid #e3dac9;
+        }
+
+        .media-player h3 {
+            color: #a38038;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .media-player audio, .media-player video {
+            width: 100%;
+            max-width: 500px;
+            margin: 10px auto;
+        }
+
+        .catalogo-doppio {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 45px;
+        }
+
+        .catalogo-singolo {
+            flex: 1;
+            min-width: 280px;
+            background-color: #ffffff;
+            border: 2px solid #a38038;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 6px 20px rgba(163, 128, 56, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .catalogo-singolo:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(163, 128, 56, 0.15);
+        }
+
+        .catalogo-singolo h2 {
+            font-size: 1.6em;
+            color: #a38038;
+            border-bottom: 2px solid #a38038;
+            padding-bottom: 12px;
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .contenuto-smart {
+            padding: 20px;
+            background: #faf8f5;
+            border-radius: 8px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .contenuto-smart:hover {
+            background: #f5f0e4;
+            transform: scale(1.02);
+        }
+
+        .icona-smart {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .testo-smart {
+            font-family: 'Lora', serif;
+            color: #a38038;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .sottotesto-smart {
+            font-family: 'Lora', serif;
+            color: #52463e;
+            font-size: 0.85em;
+            font-style: italic;
+        }
+
+        .link-blocco {
+            text-decoration: none;
+            display: flex;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .link-blocco .catalogo-singolo {
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .link-blocco .catalogo-singolo h2 {
+            margin: 0;
+            border-bottom: none;
+        }
+
+        /* Incisori */
+        .incisori-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .incisore-card {
+            background: #faf8f5;
+            border: 1px solid #ebdcb9;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .incisore-card:hover {
+            transform: translateY(-3px);
+            border-color: #a38038;
+        }
+
+        .incisore-foto {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px auto;
+            background-color: #e3dac9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-size: 2.5em;
+        }
+
+        .incisore-foto img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .incisore-nome {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2b241f;
+            margin-bottom: 10px;
+        }
+
+        .incisore-link {
+            display: inline-block;
+            color: #a38038;
+            text-decoration: none;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        .incisore-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 900px) {
+            .catalogo-doppio {
+                flex-direction: column;
+            }
+            .sezione {
+                padding: 25px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="header-zecca">
+        <h1>PIETRO LEOPOLDO</h1>
+        <div class="subtitle">Granduca di Toscana (1765 - 1790)</div>
+    </div>
+
+    <div class="container">
+        <a href="javascript:history.back()" class="back-link">← Torna alla Zecca di Firenze</a>
+
+        <!-- Media Player accessibile -->
+        <div class="media-player">
+            <h3>🎧 Ascolta / Guarda l'approfondimento</h3>
+            <audio controls>
+                <source src="audio/pietroleopoldo.mp3" type="audio/mpeg">
+                Il tuo browser non supporta l'audio.
+            </audio>
+            <br>
+            <video controls width="100%" style="max-width:500px; margin-top:15px; border-radius:8px;">
+                <source src="video/pietroleopoldo.mp4" type="video/mp4">
+                Il tuo browser non supporta il video.
+            </video>
+            <p style="font-size:0.8em; margin-top:10px;">📖 Audio descrittivo per non vedenti | 🧏 Sottotitoli per non udenti</p>
+        </div>
+
+        <!-- SEZIONE 1: STORIA -->
+        <div class="sezione">
+            <h2>📜 1. Storia</h2>
+            <p>Pietro Leopoldo d'Asburgo-Lorena, figlio dell'imperatrice Maria Teresa d'Austria, divenne Granduca di Toscana nel 1765 succedendo al padre Francesco Stefano. Il suo governo rappresentò uno dei periodi più significativi del riformismo illuminato in Italia.</p>
+            <div class="citazione-testo">
+                "Sotto il governo di Pietro Leopoldo, la Toscana conobbe un'intensa stagione di riforme amministrative, giudiziarie ed economiche. La zecca di Firenze, durante questo periodo, riflesse nelle sue emissioni monetarie lo spirito innovatore del Granduca."
+                <span class="citazione-fonte">— Corpus Nummorum Italicorum (CNI), Vol. XII</span>
+            </div>
+            <p>Tra le riforme più importanti: l'abolizione della tortura, la modernizzazione del sistema fiscale e la razionalizzazione del sistema monetario toscano, che portò a coniazioni più uniformi e di maggiore qualità.</p>
+        </div>
+
+        <!-- DOPPIO CATALOGO: SMART E CLASSICO - STESSA ALTEZZA -->
+        <div class="catalogo-doppio">
+            
+            <!-- CATALOGO SMART - ICONA CLICCABILE CHE PORTA A smart.html -->
+            <a href="smart.html" class="link-blocco" style="text-decoration: none;">
+                <div class="catalogo-singolo">
+                    <h2>🔍 Catalogo Smart</h2>
+                    <div class="contenuto-smart">
+                        <div class="icona-smart">🧠✨</div>
+                        <div class="testo-smart">Catalogo Smart</div>
+                        <div class="sottotesto-smart">Ricerca avanzata · Filtri interattivi</div>
+                        <div class="sottotesto-smart" style="margin-top: 15px; font-size: 0.75em;">⬇️ Clicca per entrare ⬇️</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- CATALOGO CLASSICO: SOLO TITOLO, STESSA ALTEZZA -->
+            <a href="pietro-leopoldo.html" class="link-blocco">
+                <div class="catalogo-singolo">
+                    <h2>📖 Catalogo Classico</h2>
+                </div>
+            </a>
+            
+        </div>
+
+        <!-- SEZIONE 3: INCISORI con FOTO e LINK -->
+        <div class="sezione">
+            <h2>✍️ 3. Incisori</h2>
+            <div class="incisori-grid">
+                
+                <div class="incisore-card">
+                    <div class="incisore-foto">
+                        📷
+                    </div>
+                    <div class="incisore-nome">Lorenzo Mari Weber</div>
+                    <a href="incisori-pietroleopoldo.html" class="incisore-link">Approfondisci →</a>
+                </div>
+
+                <div class="incisore-card">
+                    <div class="incisore-foto">
+                        📷
+                    </div>
+                    <div class="incisore-nome">Giovanni Zanobio Weber</div>
+                    <a href="incisori-pietroleopoldo.html" class="incisore-link">Approfondisci →</a>
+                </div>
+
+                <div class="incisore-card">
+                    <div class="incisore-foto">
+                        📷
+                    </div>
+                    <div class="incisore-nome">Luigi Siries</div>
+                    <a href="incisori-pietroleopoldo.html" class="incisore-link">Approfondisci →</a>
+                </div>
+
+                <div class="incisore-card">
+                    <div class="incisore-foto">
+                        📷
+                    </div>
+                    <div class="incisore-nome">Antonio Cinganelli</div>
+                    <a href="incisori-pietroleopoldo.html" class="incisore-link">Approfondisci →</a>
+                </div>
+
+                <div class="incisore-card">
+                    <div class="incisore-foto">
+                        ❓
+                    </div>
+                    <div class="incisore-nome">Incisori ignoti</div>
+                    <a href="incisori-pietroleopoldo.html" class="incisore-link">Approfondisci →</a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SEZIONE 4: DOCUMENTI -->
+        <div class="sezione">
+            <h2>📜 4. Documenti</h2>
+            <div class="citazione-testo">
+                "Con rescritto del 10 giugno 1778, il Granduca Pietro Leopoldo riforma il sistema ponderale della zecca fiorentina, uniformando i titoli dell'argento e dell'oro alle convenzioni europee."
+                <span class="citazione-fonte">— Archivio di Stato di Firenze, Zecca Fiorentina, filza 112</span>
+            </div>
+            <div class="citazione-testo">
+                "Bollario Granducale, Tomo IV: Regolamento per la coniazione delle nuove monete d'argento detto 'francescone', del peso di 26,9 grammi, titolo 833/1000."
+                <span class="citazione-fonte">— Collezione privata, Documenti notarili</span>
+            </div>
+            <p>📌 <strong>Fonti archivistiche consultabili:</strong> Archivio di Stato di Firenze, fondo Zecca Fiorentina (secoli XVI-XIX); Biblioteca Nazionale Centrale di Firenze, manoscritti lorenesi.</p>
+        </div>
+
+        <!-- SEZIONE 5: BIBLIOTECA -->
+        <div class="sezione">
+            <h2>📚 5. Biblioteca</h2>
+            <ul style="list-style: disc; padding-left: 20px;">
+                <li><a href="#" style="color:#a38038; text-decoration:none;">Corpus Nummorum Italicorum, Vol. XII (Toscana)</a></li>
+                <li><a href="#" style="color:#a38038; text-decoration:none;">M. Bernocchi, "Le monete della Repubblica Fiorentina e del Granducato di Toscana"</a></li>
+                <li><a href="#" style="color:#a38038; text-decoration:none;">G. Toderi, F. Vannel, "Le monete dei Medici e dei Lorena"</a></li>
+                <li><a href="#" style="color:#a38038; text-decoration:none;">Archivio di Stato di Firenze, Zecca Fiorentina – Documenti online</a></li>
+            </ul>
+            <p style="margin-top: 20px;">🔗 <strong>Link esterni consigliati:</strong> <a href="#" style="color:#a38038; text-decoration:none;">Numismatica Italiana - Fondazione</a> | <a href="#" style="color:#a38038; text-decoration:none;">Museo della Zecca di Firenze (virtuale)</a></p>
+        </div>
+
+    </div>
+
+</body>
+</html>

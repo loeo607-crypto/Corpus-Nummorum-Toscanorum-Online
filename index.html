@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Corpus Nummorum Toscanorum - Zecche Toscane</title>
+    
+    <!-- Leaflet CSS e JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background-color: #fcfbf7;
+            color: #2c2520;
+            line-height: 1.8;
+        }
+        .frontispiece {
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 2px double #b89742;
+            background-color: #f7f4eb;
+        }
+        .frontispiece h1 {
+            font-size: 2.8em;
+            margin: 0 0 10px 0;
+            color: #4a3728;
+            letter-spacing: 1px;
+        }
+        .frontispiece .subtitle {
+            font-size: 1.4em;
+            font-style: italic;
+            color: #8c6d31;
+            margin-bottom: 30px;
+        }
+        .frontispiece .author {
+            font-size: 1.1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        h2 {
+            color: #4a3728;
+            border-bottom: 1px solid #e0d9c1;
+            padding-bottom: 8px;
+            margin-top: 40px;
+            font-size: 1.8em;
+        }
+        p {
+            text-align: justify;
+            text-indent: 20px;
+            margin: 0 0 20px 0;
+        }
+        blockquote {
+            font-style: italic;
+            background-color: #f5f0e1;
+            border-left: 4px solid #b89742;
+            padding: 15px 20px;
+            margin: 30px 0;
+            text-align: justify;
+        }
+
+        /* Contenitore mappa */
+        .mappa-container {
+            background-color: #f5f0e1;
+            border: 1px solid #e0d9c1;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .mappa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .mappa-header h3 {
+            margin: 0;
+            color: #4a3728;
+            font-size: 1.3em;
+        }
+        
+        /* TOGGLE BUTTON (stile moderno) */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            padding: 6px 15px;
+            border-radius: 40px;
+            border: 1px solid #e0d9c1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .toggle-label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #5a4a3a;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 28px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #b89742;
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2e7d32;
+        }
+        input:checked + .slider:before {
+            transform: translateX(32px);
+        }
+        .mode-icon {
+            font-size: 1.1em;
+        }
+        
+        #mappa {
+            height: 550px;
+            width: 100%;
+            border-radius: 8px;
+            background-color: #e8e2cf;
+            z-index: 1;
+        }
+        .legenda-zecche {
+            margin-top: 15px;
+            font-size: 0.75em;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            color: #5a4a3a;
+        }
+        .legenda-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legenda-punto {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .legenda-punto.zecca {
+            background-color: #b89742;
+        }
+        .legenda-punto.zecca-disponibile {
+            background-color: #2e7d32;
+        }
+        .legenda-punto.ritrovamento {
+            background-color: #5b4b8a;
+        }
+        .legenda-punto.ripostiglio {
+            background-color: #cd5c5c;
+        }
+        
+        @media (max-width: 768px) {
+            .mappa-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            #mappa {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="frontispiece">
+        <h1>CORPUS NUMMORUM TOSCANORUM</h1>
+        <div class="subtitle">Catalogo Ragionato delle Antiche Zecche Toscane</div>
+        <div class="author">A cura di Leonardo Lavagnini</div>
+    </div>
+
+    <div class="container">
+        <h2>Prefazione</h2>
+        <p>Il <em>Corpus Nummorum Italicorum</em>, originariamente concepito e promosso da re Vittorio Emanuele III, ha rappresentato per oltre un secolo il pilastro insostituibile della numismatica italiana. Tuttavia, il progresso della ricerca, il ritrovamento di nuovi esemplari e la necessità di un approccio più snello e accessibile hanno reso evidente il bisogno di un aggiornamento radicale.</p>
+        <p>Questa nuova opera, denominata <strong>Corpus Nummorum Toscanorum (C.N.T.)</strong>, nasce con l'intento di riproporre l'impianto scientifico originale, concentrando e approfondendo lo studio esclusivamente sulla produzione delle <strong>antiche zecche toscane</strong>.</p>
+
+        <blockquote>"Dalle storiche rivalità comunali tra Pisa e Firenze, fino ai fiorini, ai grossi e ai talleri granducali: la storia della Toscana scritta attraverso le sei officine monetarie."</blockquote>
+
+        <h2>Criteri di Classificazione</h2>
+        <p>In questa trattazione, i criteri scientifici abbandonano la frammentazione dei vecchi testi per abbracciare una catalogazione geografica basata sui centri di emissione. Ogni officina monetaria viene analizzata partendo dalle sue origini medievali fino alla chiusura o all'assorbimento delle sue emissioni.</p>
+
+        <h2>Mappa Interattiva delle Zecche Toscane</h2>
+        
+        <!-- MAPPA REALE CON LEAFLET -->
+        <div class="mappa-container">
+            <div class="mappa-header">
+                <h3>🗺️ Esplora le Zecche e i Ritrovamenti</h3>
+                <div class="toggle-container">
+                    <span class="mode-icon">🏛️</span>
+                    <span class="toggle-label">Zecche</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modeToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">Ritrovamenti</span>
+                    <span class="mode-icon">🔍</span>
+                </div>
+            </div>
+            <div id="mappa"></div>
+            <div class="legenda-zecche" id="legenda">
+                <!-- Legenda dinamica -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ======================= DATI ZECCHE =======================
+        const zecche = [
+            { nome: "Firenze", lat: 43.7696, lng: 11.2558, status: "disponibile", link: "firenze.html", periodo: "1182-1790", descrizione: "Principale zecca toscana, attiva dal XII secolo", tipo: "zecca" },
+            { nome: "Pisa", lat: 43.7160, lng: 10.3966, status: "pianificato", link: "#", periodo: "X-XVI secolo", descrizione: "Zecca pisana, famosa per il 'grosso pisano'", tipo: "zecca" },
+            { nome: "Siena", lat: 43.3186, lng: 11.3306, status: "pianificato", link: "#", periodo: "XII-XVI secolo", descrizione: "Zecca senese, attiva dal XII secolo", tipo: "zecca" },
+            { nome: "Lucca", lat: 43.8426, lng: 10.5025, status: "pianificato", link: "#", periodo: "XII-XIX secolo", descrizione: "Zecca lucchese, nota per il 'fiorino lucchese'", tipo: "zecca" },
+            { nome: "Arezzo", lat: 43.4626, lng: 11.8805, status: "pianificato", link: "#", periodo: "XIII-XIV secolo", descrizione: "Zecca aretina, attiva nel medioevo", tipo: "zecca" },
+            { nome: "Livorno", lat: 43.5519, lng: 10.3083, status: "pianificato", link: "#", periodo: "XVI-XIX secolo", descrizione: "Zecca labronica, sviluppatasi con il porto", tipo: "zecca" },
+            { nome: "Prato", lat: 43.8808, lng: 11.0966, status: "pianificato", link: "#", periodo: "XIII-XIV secolo", descrizione: "Zecca pratese, emissioni limitate", tipo: "zecca" },
+            { nome: "Pistoia", lat: 43.9333, lng: 10.9167, status: "pianificato", link: "#", periodo: "XII-XIV secolo", descrizione: "Zecca pistoiese, emissioni comunali", tipo: "zecca" },
+            { nome: "Volterra", lat: 43.4024, lng: 10.8596, status: "pianificato", link: "#", periodo: "XII-XIII secolo", descrizione: "Zecca volterrana, breve periodo", tipo: "zecca" },
+            { nome: "Cortona", lat: 43.2754, lng: 11.9863, status: "pianificato", link: "#", periodo: "XIII-XIV secolo", descrizione: "Zecca cortonese", tipo: "zecca" },
+            { nome: "Grosseto", lat: 42.7635, lng: 11.1135, status: "pianificato", link: "#", periodo: "XIII-XIV secolo", descrizione: "Zecca maremmana", tipo: "zecca" },
+            { nome: "Piombino", lat: 42.9256, lng: 10.5259, status: "pianificato", link: "#", periodo: "XVI-XVII secolo", descrizione: "Zecca del Principato di Piombino", tipo: "zecca" },
+            { nome: "Massa", lat: 44.0353, lng: 10.1393, status: "pianificato", link: "#", periodo: "XVI-XVIII secolo", descrizione: "Zecca del Ducato di Massa", tipo: "zecca" }
+        ];
+
+        // ======================= DATI RITROVAMENTI ARCHEOLOGICI =======================
+        const ritrovamenti = [
+            { nome: "Ripostiglio di San Casciano", lat: 43.6417, lng: 11.1869, tipo: "ripostiglio", data: "1985", descrizione: "Oltre 200 monete romane e medievali", monete: "denari, grossi", link: "#" },
+            { nome: "Tesoro di Castagneto Carducci", lat: 43.1667, lng: 10.5833, tipo: "ripostiglio", data: "1972", descrizione: "Monete etrusche e romane repubblicane", monete: "aes rude, aes grave", link: "#" },
+            { nome: "Scavo di Roselle", lat: 42.8267, lng: 11.0594, tipo: "scavo", data: "1959", descrizione: "Ritrovamenti monetali in area etrusco-romana", monete: "monete etrusche, romane", link: "#" },
+            { nome: "Ripostiglio di Chiusi", lat: 43.0167, lng: 11.9500, tipo: "ripostiglio", data: "1887", descrizione: "Grande ripostiglio di monete romane imperiali", monete: "sesterzi, denari", link: "#" },
+            { nome: "Tesoro di Fiesole", lat: 43.8069, lng: 11.2925, tipo: "ripostiglio", data: "1945", descrizione: "Monete longobarde e carolinge", monete: "tremissi, denari", link: "#" },
+            { nome: "Scavo di Cosa", lat: 42.4083, lng: 11.2875, tipo: "scavo", data: "1948", descrizione: "Colonia romana, ritrovamenti monetali continui", monete: "aes grave, denari", link: "#" },
+            { nome: "Ripostiglio di Volterra", lat: 43.4024, lng: 10.8596, tipo: "ripostiglio", data: "1868", descrizione: "Oltre 1000 monete romane", monete: "denari, aurei", link: "#" },
+            { nome: "Tesoro di Populonia", lat: 42.9900, lng: 10.4914, tipo: "ripostiglio", data: "1958", descrizione: "Monete etrusche in argento", monete: "statere etrusche", link: "#" },
+            { nome: "Scavo di Vetulonia", lat: 42.8575, lng: 10.9714, tipo: "scavo", data: "1890", descrizione: "Necropoli etrusca con monete", monete: "aes rude, monete etrusche", link: "#" },
+            { nome: "Ripostiglio di Montepulciano", lat: 43.1000, lng: 11.7833, tipo: "ripostiglio", data: "1976", descrizione: "Monete medievali senesi", monete: "grossi senesi", link: "#" },
+            { nome: "Tesoro di Pisa (Porto Pisano)", lat: 43.6000, lng: 10.3000, tipo: "ripostiglio", data: "1899", descrizione: "Monete pisane e arabe", monete: "grossi pisani, tarì", link: "#" },
+            { nome: "Scavo di Castiglioncello", lat: 43.4000, lng: 10.4000, tipo: "scavo", data: "1965", descrizione: "Villa romana con monete imperiali", monete: "sesterzi, antoniniani", link: "#" },
+            { nome: "Ripostiglio di Lucignano", lat: 43.2667, lng: 11.7333, tipo: "ripostiglio", data: "1990", descrizione: "Monete aretine e fiorentine", monete: "fiorini, grossi", link: "#" },
+            { nome: "Tesoro di Massa Marittima", lat: 43.0500, lng: 10.8833, tipo: "ripostiglio", data: "1963", descrizione: "Monete della Repubblica di Massa", monete: "grossi, quattrini", link: "#" }
+        ];
+
+        // Inizializza la mappa
+        var map = L.map('mappa').setView([43.5, 11.2], 8);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19,
+            minZoom: 7
+        }).addTo(map);
+
+        // Variabili per i layer
+        let zeccheLayer = L.layerGroup().addTo(map);
+        let ritrovamentiLayer = L.layerGroup();
+        
+        let currentMode = "zecche"; // "zecche" o "ritrovamenti"
+
+        // Funzione per ottenere icona zecca
+        function getZeccaIcon(status) {
+            const color = status === "disponibile" ? "#2e7d32" : "#b89742";
+            return L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
+                iconSize: [18, 18],
+                popupAnchor: [0, -9]
+            });
+        }
+
+        // Funzione per ottenere icona ritrovamento
+        function getRitrovamentoIcon(tipo) {
+            const color = tipo === "ripostiglio" ? "#cd5c5c" : "#5b4b8a";
+            return L.divIcon({
+                className: 'ritrovamento-marker',
+                html: `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 8px; color: white;">${tipo === "ripostiglio" ? "⛏️" : "🏺"}</div>`,
+                iconSize: [20, 20],
+                popupAnchor: [0, -10]
+            });
+        }
+
+        // Carica le zecche sulla mappa
+        function caricaZecche() {
+            zeccheLayer.clearLayers();
+            zecche.forEach(zecca => {
+                const marker = L.marker([zecca.lat, zecca.lng], {
+                    icon: getZeccaIcon(zecca.status)
+                }).addTo(zeccheLayer);
+                
+                const popupContent = `
+                    <div style="font-family: 'Georgia', serif; text-align: center; min-width: 200px;">
+                        <strong style="color: #4a3728; font-size: 1.2em;">🏛️ ${zecca.nome}</strong>
+                        <p style="margin: 5px 0; font-size: 0.8em; color: #8c6d31;"><em>${zecca.periodo}</em></p>
+                        <p style="margin: 8px 0; font-size: 0.85em; color: #5a4a3a;">${zecca.descrizione}</p>
+                        <hr style="margin: 8px 0; border-color: #e0d9c1;">
+                        <a href="${zecca.link}" style="display: inline-block; background-color: #b89742; color: white; padding: 6px 14px; border-radius: 25px; text-decoration: none; font-size: 0.8em; margin-top: 5px;">
+                            ${zecca.status === "disponibile" ? "📖 Vai al catalogo" : "🔜 In allestimento"}
+                        </a>
+                    </div>
+                `;
+                marker.bindPopup(popupContent);
+                marker.bindTooltip(zecca.nome, { sticky: true, direction: 'top' });
+            });
+        }
+
+        // Carica i ritrovamenti sulla mappa
+        function caricaRitrovamenti() {
+            ritrovamentiLayer.clearLayers();
+            ritrovamenti.forEach(rit => {
+                const marker = L.marker([rit.lat, rit.lng], {
+                    icon: getRitrovamentoIcon(rit.tipo)
+                }).addTo(ritrovamentiLayer);
+                
+                const iconaTipo = rit.tipo === "ripostiglio" ? "⛏️ Ripostiglio" : "🏺 Scavo Archeologico";
+                const popupContent = `
+                    <div style="font-family: 'Georgia', serif; text-align: center; min-width: 220px;">
+                        <strong style="color: #4a3728; font-size: 1.1em;">📿 ${rit.nome}</strong>
+                        <p style="margin: 5px 0; font-size: 0.75em; color: #8c6d31;"><strong>${iconaTipo}</strong> | Anno: ${rit.data}</p>
+                        <p style="margin: 8px 0; font-size: 0.85em; color: #5a4a3a;">${rit.descrizione}</p>
+                        <p style="margin: 5px 0; font-size: 0.8em; color: #b89742;"><em>Monete: ${rit.monete}</em></p>
+                        <hr style="margin: 8px 0; border-color: #e0d9c1;">
+                        <a href="${rit.link}" style="display: inline-block; background-color: #5b4b8a; color: white; padding: 6px 14px; border-radius: 25px; text-decoration: none; font-size: 0.8em; margin-top: 5px;">
+                            📄 Scheda del ritrovamento
+                        </a>
+                    </div>
+                `;
+                marker.bindPopup(popupContent);
+                marker.bindTooltip(`${rit.nome} (${rit.data})`, { sticky: true, direction: 'top' });
+            });
+        }
+
+        // Aggiorna la legenda in base alla modalità
+        function aggiornaLegenda(mode) {
+            const legendaDiv = document.getElementById('legenda');
+            if (mode === "zecche") {
+                legendaDiv.innerHTML = `
+                    <span class="legenda-item"><span class="legenda-punto zecca"></span> Zecca in allestimento</span>
+                    <span class="legenda-item"><span class="legenda-punto zecca-disponibile"></span> Zecca disponibile</span>
+                    <span class="legenda-item">🖱️ Clicca sul marcatore per accedere al catalogo</span>
+                    <span class="legenda-item">🗺️ Mappa OpenStreetMap - trascinabile e zoomabile</span>
+                `;
+            } else {
+                legendaDiv.innerHTML = `
+                    <span class="legenda-item"><span class="legenda-punto ritrovamento"></span> Scavo archeologico</span>
+                    <span class="legenda-item"><span class="legenda-punto ripostiglio"></span> Ripostiglio / Tesoro</span>
+                    <span class="legenda-item">🖱️ Clicca sul marcatore per i dettagli</span>
+                    <span class="legenda-item">🗺️ Mappa OpenStreetMap - trascinabile e zoomabile</span>
+                `;
+            }
+        }
+
+        // Cambia modalità
+        function cambiaModalita(mode) {
+            currentMode = mode;
+            if (mode === "zecche") {
+                // Mostra zecche, nascondi ritrovamenti
+                map.removeLayer(ritrovamentiLayer);
+                zeccheLayer.addTo(map);
+                aggiornaLegenda("zecche");
+                // Cambia lo stile del titolo
+                document.querySelector('.mappa-header h3').innerHTML = '🏛️ Esplora le Zecche Toscane';
+            } else {
+                // Mostra ritrovamenti, nascondi zecche
+                map.removeLayer(zeccheLayer);
+                ritrovamentiLayer.addTo(map);
+                aggiornaLegenda("ritrovamenti");
+                document.querySelector('.mappa-header h3').innerHTML = '🔍 Esplora i Ritrovamenti Numismatici';
+            }
+        }
+
+        // Event listener per il toggle button
+        const toggle = document.getElementById('modeToggle');
+        toggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                cambiaModalita("ritrovamenti");
+            } else {
+                cambiaModalita("zecche");
+            }
+        });
+
+        // Inizializza tutto
+        caricaZecche();
+        caricaRitrovamenti();
+        cambiaModalita("zecche"); // Modalità di default
+
+        // Controllo scala
+        L.control.scale({ metric: true, imperial: false, position: 'bottomright' }).addTo(map);
+
+        // Popup di benvenuto
+        setTimeout(() => {
+            map.openPopup(`
+                <div style="font-family: 'Georgia', serif; text-align: center; padding: 5px;">
+                    <strong>🗺️ Benvenuto nella mappa interattiva</strong><br>
+                    <span style="font-size: 0.85em;">Usa il bottone per switchare tra ZECCHE e RITROVAMENTI</span>
+                </div>
+            `, [43.5, 11.2], { closeButton: true, autoClose: false });
+            setTimeout(() => map.closePopup(), 4000);
+        }, 500);
+    </script>
+</body>
+</html>
